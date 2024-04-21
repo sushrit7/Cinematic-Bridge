@@ -5,7 +5,7 @@ from collections import defaultdict
 
 
 # Define file paths
-input_directory = 'split_files'
+input_directory = 'split_files/name.basics'
 output_graph_file = 'graph.pickle'
 
 # Create a defaultdict to store the graph

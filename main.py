@@ -1,5 +1,5 @@
 import pickle
-from collections import deque
+import heapq
 
 # Load the graph from the pickle file
 def load_graph_from_pickle(file_path):
@@ -7,52 +7,83 @@ def load_graph_from_pickle(file_path):
         graph = pickle.load(f)
     return graph
 
-# Function to find the degree of separation between Jim Carrey and another actor
-def FL_jim5(actor_name):
-    # Load the graph
-    graph = load_graph_from_pickle('graph.pickle')
-    
-    # Check if the actor is Jim Carrey
-    if actor_name == 'Jim Carrey':
-        return 0, actor_name, None
-    
-    # Initialize the queue for BFS
-    queue = deque([(0, 'Jim Carrey', None)])  # (Degree of separation, actor, movie)
-    visited = set()
-    
-    while queue:
-        degree, current_actor, movie = queue.popleft()
-        visited.add(current_actor)
-        
-        if current_actor == actor_name:
-            if degree == 1:
-                return degree, actor_name, movie
-            else:
-                path = [movie]
-                while current_actor != 'Jim Carrey':
-                    if current_actor not in graph:
-                        return float('inf'), actor_name, None  # No connection found
-                    current_actor, movie = graph[current_actor][0], graph[current_actor][1] if len(graph[current_actor]) > 1 else None
-                    path.append(movie)
-                return degree, actor_name, path[::-1]
-        
-        if current_actor in graph:
-            for neighbor in graph[current_actor]:
-                if neighbor not in visited:
-                    queue.append((degree + 1, neighbor, graph[neighbor][1] if len(graph[neighbor]) > 1 else None))
-    
-    return float('inf'), actor_name, None  # No connection found
+def load_title_from_pickle():
+    with open("title.pickle", 'rb') as f:
+        title = pickle.load(f)
+    return title
 
+# Define function to find shortest path using Dijkstra's algorithm
+def dijkstra(graph, start):
+    distances = {node: float('inf') for node in graph}
+    distances[start] = 0
+    queue = [(0, start)]
+    previous = {}
+    while queue:
+        current_distance, current_node = heapq.heappop(queue)
+        if current_distance > distances[current_node]:
+            continue
+        for neighbor in graph[current_node]:
+            distance = current_distance + 1  # Assuming all edges have weight 1
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                heapq.heappush(queue, (distance, neighbor))
+                previous[neighbor] = current_node
+    return distances, previous
+
+# Get the path from source to target
+def get_path(previous, target):
+    path = []
+    current_node = target
+    while current_node in previous:
+        path.append(current_node)
+        current_node = previous[current_node]
+    path.append(current_node)
+    return path[::-1]
 
 # Example usage
-actor_name = 'Jeff Daniels'
-degree, actor, info = FL_jim5(actor_name)
+def degree_of_separation(graph, source_actor, target_actor):
+    distances, previous = dijkstra(graph, source_actor)
+    if target_actor not in distances:
+        return "No connection found"
+    path = get_path(previous, target_actor)
+    degree = distances[target_actor]
+    return degree, path
 
-if degree == 0:
-    print(f"The degree of separation between Jim Carrey and {actor} is {degree}.")
-elif degree == 1:
-    print(f"The degree of separation between Jim Carrey and {actor} is {degree}.")
-    print(f"{actor} has starred with Jim Carrey in the movie {info}.")
-else:
-    print(f"The degree of separation between Jim Carrey and {actor} is {degree}.")
-    print(f"Chain of movies: {' -> '.join(info)}")
+def get_movie(movie_id):
+    title_data = load_title_from_pickle()
+    movies = []
+    for movie in movie_id:
+        movie_name = title_data.get(movie, None)
+        # print(movie_name)
+        movies.append(movie_name)
+    return movies
+
+
+def print_result(degree, path, source_actor, target_actor):
+    movie_names = get_movie(path)
+    print(f">> Degree of separation between {source_actor} and {target_actor} is {degree//2}.")
+    for n in range(0, len(path) - 1, 2):
+        actor_name = path[n]
+        movie_name = movie_names[n + 1]
+        next_actor_name = path[n + 2]
+        print(f">> {actor_name} has starred with {next_actor_name} in the movie {movie_name}")
+
+
+if __name__ == '__main__':
+    # Load the graph from pickle file
+    graph = load_graph_from_pickle('graph.pickle')
+
+    # Example usage
+    source_actor = 'Jim Carrey'
+    target_actor = 'Jeff Daniels'
+    result = degree_of_separation(graph, source_actor, target_actor)
+    if isinstance(result, tuple) and len(result) == 2:
+        degree, path = result
+        print_result(degree, path, source_actor, target_actor)
+    #     print(f"Degree of separation between {source_actor} and {target_actor}: {degree/2}")
+    #     if isinstance(path, list):
+    #         print("Path:")
+    #         for i in range(len(path) - 1):
+    #             print(f"{path[i]} - {path[i+1]}")
+    # else:
+    #     print(result)  # If result is not a tuple of length 2, print the result directly
