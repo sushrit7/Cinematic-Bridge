@@ -17,8 +17,11 @@ Before you begin, ensure you have Python 3.x installed on your system.
   cd FilmConnect
 ```
 
-3. Download Dataset
-(http://imdb.com/interfaces#plain. You will need to download the name.basics.tsv.gz and the title.basics.tsv.gz files)![image](https://github.com/sushrit7/FilmConnect/assets/69793434/bc4c0c17-61c3-4905-820a-291d60ac628b)
+3. Download Dataset:
+
+   [IMDb Datasets](https://datasets.imdbws.com/)
+
+   You will need to download the `name.basics.tsv.gz` and the `title.basics.tsv.gz` files.
 
 
 ### Usage
