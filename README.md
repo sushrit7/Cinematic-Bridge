@@ -32,19 +32,12 @@ Follow these steps to use FilmConnect:
     python splitdataset.py
 ```
 
-
-2. **Title to Pickle**: Execute `titiletopickle.py` to convert title data into a pickle file for easier access during graph construction.
-```bash
-python titiletopickle.py
-```
-
-
-3. **Graph Construction**: Run `graph.py` to build the graph representation of actor relationships based on movie appearances.
+2. **Graph Construction**: Run `graph.py` to build the graph representation of actor relationships based on movie appearances.
 ```bash
 python graph.py
 ```
 
-4. **Main Program**: Finally, execute `main.py` to interact with the FilmConnect program and explore the relationships between actors.
+3. **Main Program**: Finally, execute `main.py` to interact with the FilmConnect program and explore the relationships between actors.
 ```bash
 python main.py
 ```
