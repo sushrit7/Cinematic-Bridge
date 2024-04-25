@@ -21,7 +21,7 @@ Before you begin, ensure you have Python 3.x installed on your system.
 
    [IMDb Datasets](https://datasets.imdbws.com/)
 
-   You will need to download the `name.basics.tsv.gz` and the `title.basics.tsv.gz` files.
+   You will need to download the `name.basics.tsv.gz` and the `title.basics.tsv.gz` files to the project directory.
 
 
 ### Usage
