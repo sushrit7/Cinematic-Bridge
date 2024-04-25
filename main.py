@@ -7,7 +7,7 @@ def load_graph_from_pickle(file_path):
         graph = pickle.load(f)
     return graph
 
-# Define function to find shortest path using Dijkstra's algorithm
+# Function to perform Dijkstra's algorithm with priority queue using heapq
 def dijkstra(graph, start):
     distances = {node: float('inf') for node in graph}
     distances[start] = 0
@@ -17,10 +17,18 @@ def dijkstra(graph, start):
         current_distance, current_node = heapq.heappop(queue)
         if current_distance > distances[current_node]:
             continue
+        # Checking if neighbor node exists in the graph
+        if current_node not in graph:
+            continue
         for neighbor in graph[current_node]:
-            distance = current_distance + 1  # Assuming all edges have weight 1
+            # Skipping neighbors with missing or None values
+            if neighbor is None:
+                continue
+            distance = current_distance + 1  
+            # Updating the distance if a shorter path is found
             if distance < distances[neighbor]:
                 distances[neighbor] = distance
+                # Pushing the neighbor to the priority queue
                 heapq.heappush(queue, (distance, neighbor))
                 previous[neighbor] = current_node
     return distances, previous
@@ -73,5 +81,6 @@ if __name__ == '__main__':
             else:
                 print(f"Failed for {path[0]}. Even number of nodes in the path means incorrect path.")
                 print(path)
-        else:
-            print(result)
+    else:
+        print(result)
+  
